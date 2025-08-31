@@ -3,36 +3,37 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class CorsMiddleware
 {
     public function handle($request, Closure $next)
     {
-        // Handle preflight early
+        // Handle preflight
         if ($request->getMethod() === 'OPTIONS') {
-            return response('', 204)->withHeaders($this->headers($request));
+            return response('', 204)
+                ->header('Access-Control-Allow-Origin', 'http://localhost:5173')
+                ->header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+                ->header('Access-Control-Allow-Headers', 'Authorization, Content-Type')
+                ->header('Access-Control-Expose-Headers', 'Authorization, Content-Type')
+                ->header('Vary', 'Origin');
         }
 
+        // Call the next middleware / controller
         $response = $next($request);
-        foreach ($this->headers($request) as $k => $v) {
-            $response->headers->set($k, $v);
+
+        // If controller returned a string/array etc, wrap it as a Response
+        if (!$response instanceof SymfonyResponse) {
+            $response = response($response);
         }
+
+        // Add CORS headers to the actual response
+        $response->headers->set('Access-Control-Allow-Origin', 'http://localhost:5173');
+        $response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+        $response->headers->set('Access-Control-Allow-Headers', 'Authorization, Content-Type');
+        $response->headers->set('Access-Control-Expose-Headers', 'Authorization, Content-Type');
+        $response->headers->set('Vary', 'Origin');
+
         return $response;
-    }
-
-    private function headers($request): array
-    {
-        $origin = $request->headers->get('Origin');
-        $allowed = env('CORS_ALLOWED_ORIGINS', '*');
-
-        $allowOrigin = $allowed === '*' ? '*' : (in_array($origin, array_map('trim', explode(',', $allowed))) ? $origin : '');
-
-        return [
-            'Access-Control-Allow-Origin'      => $allowOrigin ?: '*',
-            'Access-Control-Allow-Credentials' => 'true',
-            'Access-Control-Allow-Methods'     => 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
-            'Access-Control-Allow-Headers'     => 'Authorization, Content-Type, X-Requested-With, Accept, Origin',
-            'Vary'                             => 'Origin',
-        ];
     }
 }

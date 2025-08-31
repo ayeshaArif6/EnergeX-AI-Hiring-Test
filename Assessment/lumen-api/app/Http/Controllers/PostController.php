@@ -1,78 +1,109 @@
-
 <?php
 namespace App\Http\Controllers;
 
 use Laravel\Lumen\Routing\Controller as BaseController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use App\Models\Post;
-use Predis\Client as RedisClient;
-
 
 class PostController extends BaseController
 {
-    private RedisClient $redis;
-    private int $ttl;
-
-    public function __construct()
-    {
-        $this->redis = new RedisClient([
-            'host' => env('REDIS_HOST', 'redis'),
-            'port' => (int) env('REDIS_PORT', 6379),
-        ]);
-        $this->ttl = (int) env('CACHE_TTL_SECONDS', 120); 
-    }
-
     public function index()
     {
-        $key = 'posts:all';
-        if ($this->redis->exists($key)) {
-            return response()->json(json_decode($this->redis->get($key), true));
+        try {
+            $posts = Post::orderBy('id', 'desc')->get();
+            return response()->json($posts, 200);
+        } catch (\Throwable $e) {
+            Log::error('Posts index error', ['ex' => $e->getMessage()]);
+            return response()->json(['error' => 'Server error'], 500);
         }
-
-        $posts = Post::orderBy('created_at', 'desc')->get();
-        $this->redis->setex($key, $this->ttl, $posts->toJson());
-
-        return response()->json($posts);
     }
 
     public function show($id)
     {
-        $key = "posts:$id";
-        if ($this->redis->exists($key)) {
-            return response()->json(json_decode($this->redis->get($key), true));
+        try {
+            $post = Post::find($id);
+            if (!$post) return response()->json(['error' => 'Not found'], 404);
+            return response()->json($post, 200);
+        } catch (\Throwable $e) {
+            Log::error('Posts show error', ['ex' => $e->getMessage()]);
+            return response()->json(['error' => 'Server error'], 500);
         }
-
-        $post = Post::find($id);
-        if (!$post) {
-            return response()->json(['error' => 'Not found'], 404);
-        }
-
-        $this->redis->setex($key, $this->ttl, $post->toJson());
-        return response()->json($post);
     }
 
     public function store(Request $request)
     {
-        $user = $request->attributes->get('user');
-        if (!$user) return response()->json(['error' => 'Unauthorized'], 401);
+        try {
+            $user = $request->attributes->get('user');
+            if (!$user) return response()->json(['error' => 'Unauthorized'], 401);
 
-        $title = trim((string) $request->input('title', ''));
-        $content = trim((string) $request->input('content', ''));
+            $title   = trim((string)$request->input('title', ''));
+            $content = trim((string)$request->input('content', ''));
 
-        if ($title === '' || $content === '') {
-            return response()->json(['error' => 'title and content are required'], 422);
+            if ($title === '' || $content === '') {
+                return response()->json(['error' => 'title and content are required'], 422);
+            }
+
+            $post = Post::create([
+                'title'   => $title,
+                'content' => $content,
+                'user_id' => $user->id,
+            ]);
+
+            return response()->json($post, 201);
+        } catch (\Throwable $e) {
+            Log::error('Posts store error', ['ex' => $e->getMessage()]);
+            return response()->json(['error' => 'Server error'], 500);
         }
+    }
 
-        $post = Post::create([
-            'title'   => $title,
-            'content' => $content,
-            'user_id' => $user->id,
-            'created_at' => now(),
-        ]);
+    public function update($id, Request $request)
+    {
+        try {
+            $user = $request->attributes->get('user');
+            if (!$user) return response()->json(['error' => 'Unauthorized'], 401);
 
-        $this->redis->del(['posts:all']);
-        $this->redis->setex("posts:{$post->id}", $this->ttl, $post->toJson());
+            $post = Post::find($id);
+            if (!$post) return response()->json(['error' => 'Not found'], 404);
+            if ((int)$post->user_id !== (int)$user->id) {
+                return response()->json(['error' => 'Forbidden'], 403);
+            }
 
-        return response()->json($post, 201);
+            $title   = trim((string)$request->input('title', $post->title));
+            $content = trim((string)$request->input('content', $post->content));
+
+            if ($title === '' || $content === '') {
+                return response()->json(['error' => 'title and content are required'], 422);
+            }
+
+            $post->title = $title;
+            $post->content = $content;
+            $post->save();
+
+            return response()->json($post, 200);
+        } catch (\Throwable $e) {
+            Log::error('Posts update error', ['ex' => $e->getMessage()]);
+            return response()->json(['error' => 'Server error'], 500);
+        }
+    }
+
+    public function destroy($id, Request $request)
+    {
+        try {
+            $user = $request->attributes->get('user');
+            if (!$user) return response()->json(['error' => 'Unauthorized'], 401);
+
+            $post = Post::find($id);
+            if (!$post) return response()->json(['error' => 'Not found'], 404);
+            if ((int)$post->user_id !== (int)$user->id) {
+                return response()->json(['error' => 'Forbidden'], 403);
+            }
+
+            $post->delete();
+            return response()->json(['ok' => true], 200);
+        } catch (\Throwable $e) {
+            Log::error('Posts destroy error', ['ex' => $e->getMessage()]);
+            return response()->json(['error' => 'Server error'], 500);
+        }
     }
 }

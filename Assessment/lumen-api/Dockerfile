@@ -10,3 +10,4 @@ COPY --from=vendor /app/vendor ./vendor
 COPY . .
 EXPOSE 8000
 CMD ["php", "-S", "0.0.0.0:8000", "-t", "public", "public/index.php"]
+

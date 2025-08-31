@@ -1,8 +1,11 @@
 <?php
 namespace App\Models;
+
 use Illuminate\Database\Eloquent\Model;
 
-class Post extends Model {
-  protected $fillable = ['title','content','user_id','created_at'];
-  public $timestamps = false;
+class Post extends Model
+{
+    protected $table = 'posts';
+    protected $fillable = ['title', 'content', 'user_id'];
+    public $timestamps = false; 
 }

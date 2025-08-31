@@ -17,3 +17,6 @@ $router->options('/{any:.*}', function () {
     return response('', 204);
 });
 
+$router->put('/api/posts/{id}',   ['middleware' => 'jwt', 'uses' => 'PostController@update']);
+$router->delete('/api/posts/{id}',['middleware' => 'jwt', 'uses' => 'PostController@destroy']);
+

@@ -9,3 +9,5 @@ button{cursor:pointer;background:var(--brand);border:none;color:#fff} button:dis
 .list{list-style:none;padding:0;display:grid;gap:12px} .list li{background:var(--card);padding:14px;border-radius:12px}
 small{color:var(--muted)} .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
 .ok{color:var(--ok)} .error{color:var(--error)}
+.muted { color: var(--muted); }
+
