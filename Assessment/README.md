@@ -34,6 +34,7 @@ All required variables are preconfigured in docker-compose.yml
 
 ### Database schema:
 Users:
+
 | id    | name    | email   | password  |
 
 Posts:
@@ -49,15 +50,17 @@ Posts:
 ### API Endpoints:
 Auth
 
-| Method   | Endpoint   |  Description   |
-| POST     | /api/register  | Register a new user      |
-| POST     | /api/login     | Login and get JWT token  |
+| Method       | Endpoint       |  Description   |
+| :--          | :--            | :--
+| **POST**     | /api/register  | Register a new user      |
+| **POST**     | /api/login     | Login and get JWT token  |
 
 Posts (Lumen API)
 
-| Method   | Endpoint   | Auth?   | Description   |
-| GET     | /api/posts  |  ❌  | Register a new user      |
-| GET     | /api/posts/{id}  | ❌  | Login and get JWT token  |
-| POST   | /api/posts  | ✅  |  Description   |
-| PUT     | /api/posts/{id}  |   ✅  | Register a new user      |
-| DELETE     | /api/posts/{id}  |  ✅  | Login and get JWT token  |
+| Method       | Endpoint         | Auth?      | Description              |
+| :--          | :--              | :--        |                          |
+| GET          | /api/posts       |    ❌     | Register a new user      |
+| GET          | /api/posts/{id}  |    ❌     | Login and get JWT token  |
+| POST         | /api/posts       |    ✅     |  Description             |
+| PUT          | /api/posts/{id}  |    ✅     | Register a new user      |
+| DELETE       | /api/posts/{id}  |    ✅     | Login and get JWT token  |
