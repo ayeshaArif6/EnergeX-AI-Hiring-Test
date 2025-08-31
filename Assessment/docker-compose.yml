@@ -16,6 +16,16 @@ services:
       timeout: 5s
       retries: 10
 
+  lumen-api:
+    build: ./lumen-api
+    ports:
+      - "8000:8000"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
   redis:
     image: redis:7
     ports:
