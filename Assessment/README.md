@@ -75,6 +75,9 @@ Cache Layer (Node.js):
 Testing:
 docker compose exec node-cache npm test
 
+## Application images:
 
-Front end images:
+### New user home page
+<img width="1893" height="851" alt="Screenshot 2025-08-31 144924" src="https://github.com/user-attachments/assets/f5dbc209-1690-43d2-8213-9874997db1e7" />
+
 
