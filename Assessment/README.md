@@ -55,12 +55,26 @@ Auth
 | **POST**     | /api/register  | Register a new user      |
 | **POST**     | /api/login     | Login and get JWT token  |
 
-Posts (Lumen API)
 
-| Method       | Endpoint         | Auth?      | Description              |
-| :--          | :--              | :--        |                          |
-| GET          | /api/posts       |    ❌     | Register a new user      |
-| GET          | /api/posts/{id}  |    ❌     | Login and get JWT token  |
-| POST         | /api/posts       |    ✅     |  Description             |
-| PUT          | /api/posts/{id}  |    ✅     | Register a new user      |
-| DELETE       | /api/posts/{id}  |    ✅     | Login and get JWT token  |
+Posts (Lumen API)
+| Method           | Endpoint         | Auth?      | Description             |
+| :--              | :--              | :--        | :--                      |
+| **GET**          | /api/posts       |    ❌     | Register a new user      |
+| **GET**          | /api/posts/{id}  |    ❌     | Login and get JWT token  |
+| **POST**         | /api/posts       |    ✅     |  Description             |
+| **PUT**          | /api/posts/{id}  |    ✅     | Register a new user      |
+| **DELETE**       | /api/posts/{id}  |    ✅     | Login and get JWT token  |
+
+
+Cache Layer (Node.js):
+| Method       | Endpoint             |  Description             |
+| :--          | :--                  | :--                      |
+| **GET**      | /cache/posts         | Register a new user      |
+| **GET**      | /cache/posts/{id}    | Login and get JWT token  |
+
+Testing:
+docker compose exec node-cache npm test
+
+
+Front end images:
+
