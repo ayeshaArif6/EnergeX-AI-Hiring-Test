@@ -34,12 +34,14 @@ All required variables are preconfigured in docker-compose.yml
 
 ### Database schema:
 Users:
-| :--   | :--      | :--     | :--      |
+
 | **id**    | name    | email   | password  |
+| :--   | :--      | :--     | :--      |
 
 Posts:
-| :--       | :--      | :--     | :--      | :--           |
+
 | **id**    | title   | content   | user_id   | created_at  |
+| :--       | :--      | :--     | :--      | :--           |
 
 
 ### Authentication flow:
