@@ -34,11 +34,12 @@ All required variables are preconfigured in docker-compose.yml
 
 ### Database schema:
 Users:
-
-| id    | name    | email   | password  |
+| :--   | :--      | :--     | :--      |
+| **id**    | name    | email   | password  |
 
 Posts:
-| id    | title   | content   | user_id   | created_at  |
+| :--       | :--      | :--     | :--      | :--           |
+| **id**    | title   | content   | user_id   | created_at  |
 
 
 ### Authentication flow:
@@ -51,7 +52,7 @@ Posts:
 Auth
 
 | Method       | Endpoint       |  Description   |
-| :--          | :--            | :--
+| :--          | :--            | :--            |
 | **POST**     | /api/register  | Register a new user      |
 | **POST**     | /api/login     | Login and get JWT token  |
 
@@ -79,5 +80,8 @@ docker compose exec node-cache npm test
 
 ### New user home page
 <img width="1893" height="851" alt="Screenshot 2025-08-31 144924" src="https://github.com/user-attachments/assets/f5dbc209-1690-43d2-8213-9874997db1e7" />
+
+### New post + existing post
+<img width="1892" height="837" alt="app_pic" src="https://github.com/user-attachments/assets/4689dacc-be85-4daa-8fc7-1d08b77c0d01" />
 
 
