@@ -12,6 +12,10 @@ $app->routeMiddleware([
   'jwt' => App\Http\Middleware\JwtMiddleware::class,
 ]);
 
+$app->middleware([
+    App\Http\Middleware\CorsMiddleware::class,
+]);
+
 $app->router->group(['namespace'=>'App\Http\Controllers'], function ($router) {
   require __DIR__.'/../routes/web.php';
 });
